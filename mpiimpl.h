@@ -1,6 +1,7 @@
 #include "mpi.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 // Macros and functions to make standalone
 
@@ -16,13 +17,30 @@
 #define MPIR_THREADCOMM_RANK_SIZE(A,B,C) MPI_Comm_rank(*A, &B); MPI_Comm_size(*A, &C);
 #define MPL_MIN(X, Y)  ((X) < (Y) ? (X) : (Y))
 #define MPL_MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
-#define MPIR_CHKLMEM_MALLOC(A,B) A = malloc(B)
 #define MPIR_ALLREDUCE_TAG            14
 #define LOCALCOPY_TAG                 2153
 #define MPIR_Comm MPI_Comm
-#define MPIR_CHKLMEM_DECL(X)
+#define MPIR_CHKLMEM_MAX 10
+#define MPIR_CHKLMEM_DECL() \
+    void *(mpiu_chklmem_stk_[MPIR_CHKLMEM_MAX]) = { NULL }; \
+    int mpiu_chklmem_stk_sp_=0;
+#define MPIR_CHKLMEM_MALLOC(pointer_,nbytes_) \
+    do { \
+        pointer_ = malloc(nbytes_); \
+        if (pointer_) { \
+            assert(mpiu_chklmem_stk_sp_<MPIR_CHKLMEM_MAX);   \
+            mpiu_chklmem_stk_[mpiu_chklmem_stk_sp_++] = pointer_; \
+        } else if (nbytes_ > 0) { \
+            assert(0); \
+        } \
+    } while (0)
+#define MPIR_CHKLMEM_FREEALL()                                          \
+    do {                                                                \
+        while (mpiu_chklmem_stk_sp_ > 0) {                              \
+            free(mpiu_chklmem_stk_[--mpiu_chklmem_stk_sp_]);        \
+        }                                                               \
+    } while (0)
 #define MPIR_Op_is_commutative(X) 1
-#define MPIR_CHKLMEM_FREEALL(X) 
 #define MPIR_Assert(X)
 #define MPIR_Errflag_t int
 #define MPIR_Datatype_get_extent_macro(A,B) MPIR_Datatype_get_extent(A,&B)
