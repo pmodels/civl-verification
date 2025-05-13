@@ -31,18 +31,12 @@
 #define MAX_ALIGNMENT 16
 
 void MPIR_Type_get_true_extent_impl(MPI_Datatype dtype, MPI_Aint *lbptr, MPI_Aint *extentptr){
-   int myextent;
-
-   *lbptr = 0;
-   MPI_Type_size(dtype, &myextent);
-   *extentptr = myextent;
+   MPI_Type_get_extent(dtype, lbptr, extentptr);
 }
 
 void MPIR_Datatype_get_extent(MPI_Datatype dtype, MPI_Aint *extentptr){
-   int myextent;
-
-   MPI_Type_size(dtype, &myextent);
-   *extentptr = myextent;
+   MPI_Aint lb;
+   MPI_Type_get_extent(dtype, &lb, extentptr);
 }
 
 /* Returns int(log2(number)) */
