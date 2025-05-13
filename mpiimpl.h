@@ -24,7 +24,7 @@
 #define MPIR_Op_is_commutative(X) 1
 #define MPIR_CHKLMEM_FREEALL(X) 
 #define MPIR_Assert(X)
-#define MPIR_Errflag_t MPI_Status*
+#define MPIR_Errflag_t int
 #define MPIR_Datatype_get_extent_macro(A,B) MPIR_Datatype_get_extent(A,&B)
 #define MPIR_Localcopy(sbuf, scount, sdatatype, rbuf, rcount, rdatatype) MPI_Sendrecv(sbuf, scount, sdatatype, 0, LOCALCOPY_TAG, rbuf, rcount, rdatatype, 0, LOCALCOPY_TAG, MPI_COMM_SELF, MPI_STATUS_IGNORE)
 // Should never need max alignment, so use arbitrary value
