@@ -4,7 +4,6 @@
  */
 
 #include "mpiimpl_cvl.h"
-#include "mpir_threadcomm.h"
 
 /*
  * Algorithm: Recursive Doubling
