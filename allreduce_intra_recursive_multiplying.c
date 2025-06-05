@@ -33,10 +33,6 @@ int MPIR_Allreduce_intra_recursive_multiplying(const void *sendbuf,
     /* Ensure the op is commutative */
 
     int comm_size, rank, virt_rank;
-/* PDH : needed to change this to be like recursive doubling, since we shouldn't "look inside" communicators
- *    comm_size = comm_ptr->local_size;
- *    rank = comm_ptr->rank;
- */
     MPIR_THREADCOMM_RANK_SIZE(comm_ptr, rank, comm_size);
     virt_rank = rank;
 
@@ -53,11 +49,6 @@ int MPIR_Allreduce_intra_recursive_multiplying(const void *sendbuf,
     MPIR_Request **reqs;
     int num_reqs = 0;
     MPIR_CHKLMEM_MALLOC(reqs, (2 * (k - 1) * sizeof(MPIR_Request *)));
-    /* PDH: Need to allocate the reqs -- might be better if the MPIC_Isend wraper checked if allocated and allocated if not */
-    MPIR_Request *reqarray;
-    MPIR_CHKLMEM_MALLOC(reqarray, (2 * (k - 1) * sizeof(MPIR_Request)));
-    for(int i=0;i<2*(k-1);i++)
-       reqs[i] = &reqarray[i];
 
     /* need to allocate temporary buffer to store incoming data */
     MPI_Aint true_extent, true_lb, extent;
