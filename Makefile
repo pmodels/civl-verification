@@ -2,20 +2,28 @@ civl: naive_verify rd_verify rsag_verify
 
 all: my_allreduce rd_allreduce rm_allreduce
 
+transform_sources:
+	bash transform.sh allreduce_intra_recursive_doubling.c allred_recursive_doubling.c
+	bash transform.sh allreduce_intra_recursive_multiplying.c allred_recursive_multiplying.c
+	bash transform.sh allreduce_intra_reduce_scatter_allgather.c allred_reduce_scatter_allgather.c
+
 my_allreduce: my_allreduce_driver.c
 	mpicc -o my_allreduce my_allreduce_driver.c
 
 naive_allreduce: naive_allreduce_driver.c
 	mpicc -o naive_allreduce naive_allreduce_driver.c
 
-rd_allreduce: rd_allreduce_driver.c allreduce_intra_recursive_doubling.c mpiimpl.h
-	mpicc -o rd_allreduce rd_allreduce_driver.c allreduce_intra_recursive_doubling.c
+rd_allreduce: rd_allreduce_driver.c allred_recursive_doubling.c mpiimpl.h
+	bash transform.sh allreduce_intra_recursive_doubling.c allred_recursive_doubling.c
+	mpicc -o rd_allreduce rd_allreduce_driver.c allred_recursive_doubling.c
 
 rm_allreduce: rm_allreduce_driver.c allreduce_intra_recursive_multiplying.c mpiimpl.h
-	mpicc -o rm_allreduce rm_allreduce_driver.c allreduce_intra_recursive_multiplying.c
+	bash transform.sh allreduce_intra_recursive_multiplying.c allred_recursive_multiplying.c
+	mpicc -o rm_allreduce rm_allreduce_driver.c allred_recursive_multiplying.c
 
 rsag_allreduce: rsag_allreduce_driver.c allreduce_intra_reduce_scatter_allgather.c mpiimpl.h
-	mpicc -o rsag_allreduce rsag_allreduce_driver.c allreduce_intra_reduce_scatter_allgather.c
+	bash transform.sh allreduce_intra_reduce_scatter_allgather.c allred_reduce_scatter_allgather.c
+	mpicc -o rsag_allreduce rsag_allreduce_driver.c allred_reduce_scatter_allgather.c
 
 naive_verify: naive_allreduce_driver.cvl
 	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=10 naive_allreduce_driver.cvl
