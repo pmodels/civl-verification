@@ -4,16 +4,15 @@
 
 // Macros and functions to make standalone
 
-#define MPIC_Sendrecv(A,B,C,D,E,F,G,H,I,J,K,L,M) MPI_Sendrecv(A,B,C,D,E,F,G,H,I,J,(*K),L)
-#define MPIC_Send(A,B,C,D,E,F,G) MPI_Send(A,B,C,D,E,(*F))
-#define MPIC_Recv(A,B,C,D,E,F,G) MPI_Recv(A,B,C,D,E,(*F),G) 
-#define MPIC_Isend(A,B,C,D,E,F,G,H) MPI_Isend(A,B,C,D,E,(*F),(*G))
-#define MPIC_Irecv(A,B,C,D,E,F,G) MPI_Irecv(A,B,C,D,E,(*F),(*G)) 
-#define MPIC_Waitall(A,B,C) MPI_Waitall(A,(*B),C)
-#define MPIR_Request MPI_Request
+#define MPIC_Sendrecv(A,B,C,D,E,F,G,H,I,J,K,L) MPI_Sendrecv(A,B,C,D,E,F,G,H,I,J,K,L)
+#define MPIC_Send(A,B,C,D,E,F) MPI_Send(A,B,C,D,E,F)
+#define MPIC_Recv(A,B,C,D,E,F,G) MPI_Recv(A,B,C,D,E,F,G)
+#define MPIC_Isend(A,B,C,D,E,F,G) MPI_Isend(A,B,C,D,E,F,G)
+#define MPIC_Irecv(A,B,C,D,E,F,G) MPI_Irecv(A,B,C,D,E,F,G)
+#define MPIC_Waitall(A,B,C) MPI_Waitall(A,B,C)
 #define MPIR_Reduce_local CIVL_MPI_Reduce_local 
 #define MPIR_ERR_CHECK(X)
-#define MPIR_THREADCOMM_RANK_SIZE(A,B,C) MPI_Comm_rank(*A, &B); MPI_Comm_size(*A, &C);
+#define MPIR_THREADCOMM_RANK_SIZE(A,B,C) MPI_Comm_rank(A, &B); MPI_Comm_size(A, &C);
 #define MPL_MIN(X, Y)  ((X) < (Y) ? (X) : (Y))
 #define MPL_MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
 #define MPIR_CHKLMEM_MALLOC(A,B) A = (MPI_Aint *) malloc(B) 
@@ -32,7 +31,6 @@
 
 #define MPIR_ALLREDUCE_TAG            14
 #define LOCALCOPY_TAG                 2153
-#define MPIR_Comm MPI_Comm
 #define MPIR_CHKLMEM_DECL(X)
 #define MPIR_Op_is_commutative(X) 1
 #define MPIR_CHKLMEM_FREEALL(X) free(tmp_buf)

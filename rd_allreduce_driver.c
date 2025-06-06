@@ -9,22 +9,20 @@
 
 int My_Allreduce(void *, void *, int, MPI_Datatype, MPI_Op, MPI_Comm);
 
-int MPIR_Allreduce_intra_recursive_doubling(const void *,
-                                            void *,
-                                            MPI_Aint,
-                                            MPI_Datatype,
-                                            MPI_Op, MPI_Comm *, MPI_Status *);
+int MPIR_Allreduce_intra_recursive_doubling(const void *sendbuf,
+                                            void *recvbuf,
+                                            MPI_Aint count,
+                                            MPI_Datatype datatype,
+                                            MPI_Op op, MPI_Comm comm);
 
 int main(int argc, char *argv[]) {
     int rank, size;
     double x[N], allreduce_result[N], my_allreduce_result[N];
-    MPI_Comm mycomm;
 
     MPI_Init(&argc, &argv);
 
-    MPI_Comm_dup(MPI_COMM_WORLD, &mycomm);
-    MPI_Comm_rank(mycomm, &rank);
-    MPI_Comm_size(mycomm, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     // Initialize array x on each process (example: fill with rank)
     for (int i = 0; i < N; i++) {
@@ -32,10 +30,10 @@ int main(int argc, char *argv[]) {
     }
 
     // Perform MPI_AllReduce
-    MPI_Allreduce(x, allreduce_result, N, MPI_DOUBLE, AR_OP, mycomm);
+    MPI_Allreduce(x, allreduce_result, N, MPI_DOUBLE, AR_OP, MPI_COMM_WORLD);
 
-    // My_Allreduce(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, mycomm);
-    MPIR_Allreduce_intra_recursive_doubling(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, &mycomm, MPI_STATUS_IGNORE);
+    // My_Allreduce(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, MPI_COMM_WORLD);
+    MPIR_Allreduce_intra_recursive_doubling(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, MPI_COMM_WORLD);
 
     // Compare results
     int correct = 1;
