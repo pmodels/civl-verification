@@ -1,6 +1,7 @@
 #include "mpi.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 // Macros and functions to make standalone
 
@@ -15,25 +16,50 @@
 #define MPIR_THREADCOMM_RANK_SIZE(A,B,C) MPI_Comm_rank(A, &B); MPI_Comm_size(A, &C);
 #define MPL_MIN(X, Y)  ((X) < (Y) ? (X) : (Y))
 #define MPL_MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
-#define MPIR_CHKLMEM_MALLOC(A,B) A = (MPI_Aint *) malloc(B) 
-#define MPIR_CHKLMEM_MALLOC_CIVL(A,B,C) \
-    switch (A) { \
-        case MPI_INT: \
-            B = (int *) malloc(C); \
-            break; \
-        case MPI_FLOAT: \
-            B = (float *) malloc(C); \
-            break; \
-        case MPI_DOUBLE: \
-            B = (double *) malloc(C); \
-            break; \
-    } \
+#define MPIR_CHKLMEM_MAX 10
+#define MPIR_CHKLMEM_DECL()                                     \
+    void *(mpiu_chklmem_stk_[MPIR_CHKLMEM_MAX]) = { NULL };     \
+    int mpiu_chklmem_stk_sp_=0;
+#define MPIR_CHKLMEM_FREEALL()                                          \
+    do {                                                                \
+        while (mpiu_chklmem_stk_sp_ > 0) {                              \
+            free(mpiu_chklmem_stk_[--mpiu_chklmem_stk_sp_]);            \
+        }                                                               \
+    } while (0)
+#define MPIR_CHKLMEM_MALLOC(pointer_,nbytes_)                     \
+    do {                                                          \
+        pointer_ = (MPI_Aint *)malloc(nbytes_);                   \
+        if (pointer_) {                                           \
+            assert(mpiu_chklmem_stk_sp_<MPIR_CHKLMEM_MAX);        \
+            mpiu_chklmem_stk_[mpiu_chklmem_stk_sp_++] = pointer_; \
+        } else if (nbytes_ > 0) {                                 \
+            assert(0);                                            \
+        }                                                         \
+    } while (0)
+#define MPIR_CHKLMEM_MALLOC_CIVL(datatype_,pointer_,nbytes_)            \
+    do {                                                                \
+        switch (datatype_) {                                            \
+        case MPI_INT:                                                   \
+            pointer_ = (int *) malloc(nbytes_);                         \
+            break;                                                      \
+        case MPI_FLOAT:                                                 \
+            pointer_ = (float *) malloc(nbytes_);                       \
+            break;                                                      \
+        case MPI_DOUBLE:                                                \
+            pointer_ = (double *) malloc(nbytes_);                      \
+            break;                                                      \
+        }                                                               \
+        if (pointer_) {                                                 \
+            assert(mpiu_chklmem_stk_sp_<MPIR_CHKLMEM_MAX);              \
+            mpiu_chklmem_stk_[mpiu_chklmem_stk_sp_++] = pointer_;       \
+        } else if (nbytes_ > 0) {                                       \
+            assert(0);                                                  \
+        }                                                               \
+    } while (0)
 
 #define MPIR_ALLREDUCE_TAG            14
 #define LOCALCOPY_TAG                 2153
-#define MPIR_CHKLMEM_DECL(X)
 #define MPIR_Op_is_commutative(X) 1
-#define MPIR_CHKLMEM_FREEALL(X) free(tmp_buf)
 #define MPIR_Assert(X)
 #define MPIR_Errflag_t MPI_Status*
 #define MPIR_Datatype_get_extent_macro(A,B) MPIR_Datatype_get_extent(A,&B)
