@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     MPI_Allreduce(x, allreduce_result, N, MPI_DOUBLE, AR_OP, MPI_COMM_WORLD);
 
     // My_Allreduce(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, MPI_COMM_WORLD);
-    MPIR_Allreduce_intra_reduce_scatter_allgather(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, &MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPIR_Allreduce_intra_reduce_scatter_allgather(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, MPI_COMM_WORLD);
 
     // Compare results
     int correct = 1;
