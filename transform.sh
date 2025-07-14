@@ -8,9 +8,12 @@ fi
 echo "transforming $1"
 
 sed -e 's/MPIR_Comm.*\*.*comm_ptr/MPI_Comm comm/g' \
+    -e 's/MPIR_Comm.*\*.*comm/MPI_Comm comm/g' \
     -e 's/comm_ptr/comm/g' \
     -e 's/MPIR_Request \*/MPI_Request /g' \
     -e 's/MPIR_Request/MPI_Request/g' \
+    -e 's/, int coll_attr//g' \
+    -e 's/, coll_attr//g' \
     -e 's/, MPIR_Errflag_t errflag//g' \
     -e 's/, errflag//g' $1 > $2
 
