@@ -3,7 +3,7 @@
  *     See COPYRIGHT in top-level directory
  */
 
-#include "mpiimpl.h"
+#include "mpiimpl_cvl.h"
 #include <math.h>
 
 /*
@@ -60,7 +60,7 @@ int MPIR_Allreduce_intra_recursive_multiplying(const void *sendbuf,
         }
     }
 
-    MPIR_CHKLMEM_MALLOC(tmp_buf, (k - 1) * single_size);
+    MPIR_CHKLMEM_MALLOC_CIVL(datatype, tmp_buf, (k - 1) * single_size);
 
     /* adjust for potential negative lower bound in datatype */
     tmp_buf = (void *) ((char *) tmp_buf - true_lb);
