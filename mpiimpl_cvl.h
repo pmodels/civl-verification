@@ -28,7 +28,7 @@
     } while (0)
 #define MPIR_CHKLMEM_MALLOC(pointer_,nbytes_)                     \
     do {                                                          \
-        pointer_ = (MPI_Aint *)malloc(nbytes_);                   \
+        pointer_ = malloc(nbytes_);                   \
         if (pointer_) {                                           \
             assert(mpiu_chklmem_stk_sp_<MPIR_CHKLMEM_MAX);        \
             mpiu_chklmem_stk_[mpiu_chklmem_stk_sp_++] = pointer_; \
