@@ -13,7 +13,7 @@
 #define MPIC_Waitall(A,B,C) MPI_Waitall(A,B,C)
 #define MPIR_Reduce_local MPI_Reduce_local
 #define MPIR_ERR_CHECK(X)
-#define MPIR_THREADCOMM_RANK_SIZE(A,B,C) MPI_Comm_rank(A, &B); MPI_Comm_size(A, &C);
+#define MPIR_COMM_RANK_SIZE(A,B,C) MPI_Comm_rank(A, &B); MPI_Comm_size(A, &C);
 #define MPL_MIN(X, Y)  ((X) < (Y) ? (X) : (Y))
 #define MPL_MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
 #define MPIR_ALLREDUCE_TAG            14
