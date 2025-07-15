@@ -9,12 +9,6 @@
 
 int My_Allreduce(void *, void *, int, MPI_Datatype, MPI_Op, MPI_Comm);
 
-int MPIR_Allreduce_intra_recursive_doubling(const void *,
-                                            void *,
-                                            MPI_Aint,
-                                            MPI_Datatype,
-                                            MPI_Op, MPI_Comm *, MPI_Status *);
-
 int MPIR_Allreduce_intra_recursive_multiplying(const void *,
                                                void *,
                                                MPI_Aint,
@@ -41,8 +35,6 @@ int main(int argc, char *argv[]) {
     // Perform MPI_AllReduce
     MPI_Allreduce(x, allreduce_result, N, MPI_DOUBLE, AR_OP, mycomm);
 
-    // My_Allreduce(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, mycomm);
-    // MPIR_Allreduce_intra_recursive_doubling(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, &mycomm, MPI_STATUS_IGNORE);
     MPIR_Allreduce_intra_recursive_multiplying(x, my_allreduce_result, N, MPI_DOUBLE, AR_OP, &mycomm, 3, MPI_STATUS_IGNORE);
 
     // Compare results
