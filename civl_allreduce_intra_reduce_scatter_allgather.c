@@ -265,8 +265,6 @@ int MPIR_Allreduce_intra_reduce_scatter_allgather(const void *sendbuf,
 
             mask >>= 1;
         }
-        free(cnts);
-        free(disps);
     }
     /* In the non-power-of-two case, all odd-numbered
      * processes of rank < 2*rem send the result to
