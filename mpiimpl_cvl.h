@@ -57,8 +57,10 @@
         }                                                               \
     } while (0)
 
+#define MPIR_ALLGATHERV_TAG           8
 #define MPIR_ALLREDUCE_TAG            14
 #define LOCALCOPY_TAG                 2153
+#define MPIR_CVAR_ALLGATHERV_PIPELINE_MSG_SIZE -1
 #define MPIR_Op_is_commutative(X) 1
 #define MPIR_Assert(X)
 #define MPIR_Errflag_t MPI_Status*

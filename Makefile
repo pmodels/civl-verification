@@ -6,6 +6,7 @@ transform_sources:
 	bash transform.sh allreduce_intra_recursive_doubling.c allred_recursive_doubling.c
 	bash transform.sh allreduce_intra_recursive_multiplying.c allred_recursive_multiplying.c
 	bash transform.sh allreduce_intra_reduce_scatter_allgather.c allred_reduce_scatter_allgather.c
+	bash transform.sh allreduce_intra_ring.c allred_ring.c
 
 my_allreduce: my_allreduce_driver.c
 	mpicc -o my_allreduce my_allreduce_driver.c
@@ -24,6 +25,10 @@ rm_allreduce: rm_allreduce_driver.c allreduce_intra_recursive_multiplying.c mpii
 rsag_allreduce: rsag_allreduce_driver.c allreduce_intra_reduce_scatter_allgather.c mpiimpl.h
 	bash transform.sh allreduce_intra_reduce_scatter_allgather.c allred_reduce_scatter_allgather.c
 	mpicc -o rsag_allreduce rsag_allreduce_driver.c allred_reduce_scatter_allgather.c
+
+ring_allreduce: ring_allreduce_driver.c allreduce_intra_ring.c mpiimpl.h
+	bash transform.sh allreduce_intra_ring.c allred_ring.c
+	mpicc -o ring_allreduce ring_allreduce_driver.c allred_ring.c
 
 naive_verify: naive_allreduce_driver.cvl
 	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=10 naive_allreduce_driver.cvl
@@ -48,6 +53,13 @@ rm_verify: rm_allreduce_driver.cvl civl_allreduce_intra_recursive_multiplying.c 
 	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=10 -DAR_OP=MPI_SUM rm_allreduce_driver.cvl civl_allred_recursive_multiplying.c civl_mpi_funcs.c
 	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=5 -DNMAX=5 -DAR_OP=MPI_MAX rm_allreduce_driver.cvl civl_allred_recursive_multiplying.c civl_mpi_funcs.c
 	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=5 -DNMAX=5 -DAR_OP=MPI_MIN rm_allreduce_driver.cvl civl_allred_recursive_multiplying.c civl_mpi_funcs.c
+
+ring_verify: ring_allreduce_driver.cvl civl_allreduce_intra_ring.c civl_mpi_funcs.c mpiimpl_cvl.h
+	bash transform.sh civl_allreduce_intra_ring.c civl_allred_ring.c
+	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=10 -DAR_OP=MPI_PROD ring_allreduce_driver.cvl civl_allred_ring.c civl_mpi_funcs.c
+	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=10 -DAR_OP=MPI_SUM ring_allreduce_driver.cvl civl_allred_ring.c civl_mpi_funcs.c
+	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=5 -DNMAX=5 -DAR_OP=MPI_MAX ring_allreduce_driver.cvl civl_allred_ring.c civl_mpi_funcs.c
+	civl verify -input_mpi_nprocs_lo=1 -input_mpi_nprocs_hi=5 -DNMAX=5 -DAR_OP=MPI_MIN ring_allreduce_driver.cvl civl_allred_ring.c civl_mpi_funcs.c
 
 clean:
 	rm -rf my_allreduce rd_allreduce rm_allreduce rsag_allreduce naive_allreduce my_allreduce.dSYM rd_allreduce.dSYM rm_allreduce.dSYM rsag_allreduce.dSYM naive_allreduce.dSYM

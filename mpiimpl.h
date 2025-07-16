@@ -16,6 +16,7 @@
 #define MPIR_COMM_RANK_SIZE(A,B,C) MPI_Comm_rank(A, &B); MPI_Comm_size(A, &C);
 #define MPL_MIN(X, Y)  ((X) < (Y) ? (X) : (Y))
 #define MPL_MAX(X, Y)  ((X) > (Y) ? (X) : (Y))
+#define MPIR_ALLGATHERV_TAG           8
 #define MPIR_ALLREDUCE_TAG            14
 #define LOCALCOPY_TAG                 2153
 #define MPIR_Comm MPI_Comm
@@ -39,6 +40,7 @@
             free(mpiu_chklmem_stk_[--mpiu_chklmem_stk_sp_]);        \
         }                                                               \
     } while (0)
+#define MPIR_CVAR_ALLGATHERV_PIPELINE_MSG_SIZE -1
 #define MPIR_Op_is_commutative(X) 1
 #define MPIR_Assert(X)
 #define MPIR_Datatype_get_extent_macro(A,B) MPIR_Datatype_get_extent(A,&B)
